@@ -36,7 +36,7 @@ CFLAGS	:=	$(WFLAGS) -I$(INC_DIR) $(COMPILE)
 
 #---LINKER FLAGS--- (-L<library path>, Example: -L/usr/local/lib)
 
-LDFLAGS	:=	$(WFLAGS) $(PCAPPP_LIBS_DIR)
+LDFLAGS	:=	$(WFLAGS)
 
 #---LIBRARIES--- (-l<lib name>, Example: -llibPcap++, -llibmongocxx.so)
 
