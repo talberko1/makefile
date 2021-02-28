@@ -2,11 +2,16 @@
 
 #---QUICK GUIDE---
 
-#In order to create the required directories, use 'make start'.
-#This command will generate the directories 'src' and 'include' by default.
-#The default names for each generated directory can be edited below.
+#In order to initialize the project with the required directories, use 'make init'.
+#This command will generate the source and header directories.
+#The default values of each variable below may be altered to your preference.
+#Editing the internal makefile is at your own risk.
 
 #In order to compile your project, use 'make' or 'make all'
+
+
+#*****START OF MAKEFILE*****
+
 
 #---TARGET EXECUTABLE / LIBRARY NAME---
 
@@ -29,26 +34,51 @@ SRC_EXT	:=	cpp
 
 CC	:=	g++
 
-COMPILE	:=	-c
-OUTPUT	:=	-o
 
-WFLAGS	:=	-Wall -Werror
+#*****START OF USER DATA*****
+
+
+
+
+
+#*****END OF USER DATA*****
+
+
+#*****START OF FLAGS*****
+
+
+
+#---WARNING FLAGS--- (-W<flag name>)
+
+WFLAGS	:=
 
 #---COMPILER FLAGS--- (-I<include path>, Example: -I/usr/local/include)
 
-CFLAGS	:=	$(WFLAGS) -I$(INC_DIR)  $(COMPILE)
+CFLAGS	:=
 
 #---LINKER FLAGS--- (-L<library path>, Example: -L/usr/local/lib)
 
-LDFLAGS	:=	$(WFLAGS)
+LDFLAGS	:=
 
-#---LIBRARIES--- (-l<lib name>, Example: -llibPcap++, -llibmongocxx.so)
+#---LIBRARIES--- (-l<lib name>, Example: -lPcap++, -lmongocxx.so)
 
-LIBS	:=	
+LDLIBS	:=
 
-#==============DO=NOT=EDIT=BELOW=THIS=LINE==============#
+
+
+#*****END OF FLAGS*****
+
+
+#*****START OF INTERNAL MAKEFILE*****
+
+COMPILE	:=	-c
+OUTPUT	:=	-o
+
+#---RECURSIVE WILDCARD FUNCTION---
 
 recursive_wildcard=$(foreach d,$(wildcard $(1:=/*)),$(call recursive_wildcard,$d,$2,)	$(filter $(subst *,%,$2),$d))
+
+#---GETTING ALL SOURCE FILES USING THE RECURSIVE WILDCARD FUNCTION---
 
 SRCS	:=	$(call recursive_wildcard,$(SRC_DIR),*.$(SRC_EXT))
 OBJS	:=	$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%.$(OBJ_EXT),$(basename $(SRCS)))
@@ -57,13 +87,16 @@ DEPS	:=	$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%.$(DEP_EXT),$(basename $(SRCS)))
 GENERATED_DIRS	:=	$(OBJ_DIR)	$(BIN_DIR)
 
 #---DEPENDENCY FLAGS---
+
 DEPFLAGS	:=	-MMD	-MP
 
-#---MAKE TARGET---
+#---COMPILE & BUILD RULE---
+
 .PHONY: all
 all:	$(SRCS)	$(GENERATED_DIRS)	$(TARGET)
 
-#---MAKE INITIAL DIRECTORIES---
+#---INIT RULE---
+
 .PHONY: init
 init:
 	@echo "Building source directory: $(SRC_DIR)"
@@ -72,14 +105,16 @@ init:
 	@mkdir	$(INC_DIR)
 	@echo "Created base directories!"
 
-#Make the needed directories
+#---OUTPUT DIRECTORIES CREATION RULE---
+
 $(GENERATED_DIRS):
 	@mkdir $@
 
-#Make target application
+#---LINK RULE---
+
 $(TARGET):	$(OBJS)
 	@echo "Building target: $(BIN_DIR)/$@"
-	@$(CC)	$(LDFLAGS) $^ $(OUTPUT) $(BIN_DIR)/$@ $(LIBS)
+	@$(CC)	$(LDFLAGS) $^ $(OUTPUT) $(BIN_DIR)/$@ $(LDLIBS)
 	@echo "Done!"
 
 .PRECIOUS:	$(OBJ_DIR)/.	$(OBJ_DIR)%/.
@@ -92,14 +127,20 @@ $(OBJ_DIR)%/.:
 
 .SECONDEXPANSION:
 
-#Make object files and put them in the 'obj' directory
+#---COMPILE RULE---
+
 $(OBJ_DIR)/%.$(OBJ_EXT):	$(SRC_DIR)/%.$(SRC_EXT) | $$(@D)/.
 	@echo "Building file: $@"
-	@$(CC)	$(DEPFLAGS)	$(CFLAGS) $< $(OUTPUT)	$@
+	@$(CC)	$(DEPFLAGS)	$(CFLAGS)	$(COMPILE)	$< $(OUTPUT)	$@
 
-#Clean target application
+#---CLEAN RULE---
+
 clean:
 	@echo "Cleaning.."
 	$(foreach dir,$(GENERATED_DIRS),@rm -rf $(dir))
 	@echo "Done!"
 -include $(DEPS)
+
+#*****END OF INTERNAL MAKEFILE*****
+
+#*****END OF MAKEFILE*****
