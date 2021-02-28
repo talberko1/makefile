@@ -54,7 +54,7 @@ WFLAGS	:=
 
 #---COMPILER FLAGS--- (-I<include path>, Example: -I/usr/local/include)
 
-CFLAGS	:=
+CFLAGS	:=	-I$(INC_DIR)
 
 #---LINKER FLAGS--- (-L<library path>, Example: -L/usr/local/lib)
 
