@@ -114,7 +114,7 @@ $(GENERATED_DIRS):
 
 $(TARGET):	$(OBJS)
 	@echo "Building target: $(BIN_DIR)/$@"
-	@$(CC)	$(LDFLAGS) $^ $(OUTPUT) $(BIN_DIR)/$@ $(LDLIBS)
+	@$(CC)	$(WFLAGS)	$(LDFLAGS) $^ $(OUTPUT) $(BIN_DIR)/$@ $(LDLIBS)
 	@echo "Done!"
 
 .PRECIOUS:	$(OBJ_DIR)/.	$(OBJ_DIR)%/.
@@ -131,7 +131,7 @@ $(OBJ_DIR)%/.:
 
 $(OBJ_DIR)/%.$(OBJ_EXT):	$(SRC_DIR)/%.$(SRC_EXT) | $$(@D)/.
 	@echo "Building file: $@"
-	@$(CC)	$(DEPFLAGS)	$(CFLAGS)	$(COMPILE)	$< $(OUTPUT)	$@
+	@$(CC)	$(WFLAGS)	$(DEPFLAGS)	$(CFLAGS)	$(COMPILE)	$< $(OUTPUT)	$@
 
 #---CLEAN RULE---
 
